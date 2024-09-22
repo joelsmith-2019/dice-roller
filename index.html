@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller</title>
+    <style>
+        body {
+            background-color: lightgray;
+            margin-top: 50px;
+        }
+
+        .white {
+            background-color: white;
+        }
+
+        .blue {
+            background-color: blue;
+            color: white;
+        }
+
+        .orange {
+            background-color: orange;
+        }
+
+        .purple {
+            background-color: purple;
+            color: white;
+        }
+
+        .green {
+            background-color: green;
+            color: white;
+        }
+
+        .yellow {
+            background-color: yellow;
+        }
+
+        .starting-dice,
+        .reserved,
+        .leftovers {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border: 2px solid black;
+            border-radius: 2px;
+            height: 100px;
+        }
+
+        .title {
+            font-size: 24px;
+        }
+
+        .dice-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .die {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #000;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            margin-top: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            background-color: lightblue;
+            color: black;
+            border: 2px solid black;
+            border-radius: 2px;
+        }
+        .notes {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="starting-dice">
+        <div class="dice-container">
+            <div id="die1" class="die white"></div>
+            <div id="die2" class="die blue"></div>
+            <div id="die3" class="die orange"></div>
+            <div id="die4" class="die purple"></div>
+            <div id="die5" class="die green"></div>
+            <div id="die6" class="die yellow"></div>
+        </div>
+    </div>
+    <div class="buttons">
+        <button onclick="rollDice()">Roll Dice</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+    <div class="reserved">
+        <div class="title">Reserved:</div>
+        <div class="dice-container"></div>
+    </div>
+    <div class="leftovers">
+        <div class="title">Leftovers:</div>
+        <div class="dice-container"></div>
+    </div>
+    <div class="notes">
+        <p>
+            Left click => Move dice to reserved<br>
+            Right click => Move dice to leftovers<br><br>
+
+            Left click (again) => Move dice back to starting dice
+        </p>
+    </div>
+    <script>
+        document.querySelectorAll('.die').forEach(die => {
+            // Move dice to reserved or back to starting-dice with left click
+            die.addEventListener('click', () => {
+                if (die.classList.contains('res') || die.classList.contains('left')) {
+                    die.classList.remove('res', 'left');
+                    document.querySelector('.starting-dice .dice-container').appendChild(die);
+                } else {
+                    document.querySelector('.reserved .dice-container').appendChild(die);
+                    die.classList.add('res');
+                    die.classList.remove('left');
+                }
+            });
+
+            // Move dice to leftovers with right click
+            die.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                document.querySelector('.leftovers .dice-container').appendChild(die);
+                die.classList.add('res');
+                die.classList.remove('left');
+            });
+
+            // Move die back to starting dice
+            die.addEventListener('click', () => {
+            });
+        });
+
+        // Roll all dice in the starting dice
+        function rollDice() {
+            document.querySelectorAll('.starting-dice .die').forEach(die => {
+                if (!die.classList.contains('res')) {
+                    die.textContent = Math.floor(Math.random() * 6) + 1;
+                }
+            });
+        }
+
+        // Reset all dice
+        function reset() {
+            document.querySelectorAll('.die').forEach(die => {
+                die.textContent = '';
+                die.classList.remove('res', 'left');
+                document.querySelector('.dice-container').appendChild(die);
+            });
+        }
+    </script>
+</body>
+
+</html>
