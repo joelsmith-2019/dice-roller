@@ -170,7 +170,7 @@
             die.addEventListener('touchstart', (event) => {
                 touchTimer = setTimeout(() => {
                     moveToLeftovers(event.target);
-                }, 500); // 500ms for long press
+                }, 200); // 200ms for long press
             });
 
             die.addEventListener('touchend', () => {
