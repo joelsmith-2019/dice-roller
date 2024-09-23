@@ -62,8 +62,8 @@
         }
 
         .die {
-            width: 50px;
-            height: 50px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -88,8 +88,14 @@
             border: 2px solid black;
             border-radius: 2px;
         }
+
         .notes {
             padding: 10px;
+        }
+
+        .pc,
+        .mobile {
+            display: none;
         }
     </style>
 </head>
@@ -118,14 +124,29 @@
         <div class="dice-container"></div>
     </div>
     <div class="notes">
-        <p>
+        <p class="pc">
             Left click => Move dice to reserved<br>
             Right click => Move dice to leftovers<br><br>
 
             Left click (again) => Move dice back to starting dice
         </p>
+        <p class="mobile">
+            Tap => Move dice to reserved<br>
+            Long press => Move dice to leftovers<br><br>
+
+            Tap (again) => Move dice back to starting dice
+        </p>
     </div>
     <script>
+        // Display correct notes based on device
+        document.addEventListener('DOMContentLoaded', () => {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                document.querySelector('.mobile').style.display = 'block';
+            } else {
+                document.querySelector('.pc').style.display = 'block';
+            }
+        });
+
         document.querySelectorAll('.die').forEach(die => {
             // Move dice to reserved or back to starting-dice with left click
             die.addEventListener('click', () => {
@@ -139,17 +160,28 @@
                 }
             });
 
-            // Move dice to leftovers with right click
+            // Move dice to leftovers with right click or long press
             die.addEventListener('contextmenu', (event) => {
                 event.preventDefault();
-                document.querySelector('.leftovers .dice-container').appendChild(die);
-                die.classList.add('res');
-                die.classList.remove('left');
+                moveToLeftovers(die);
             });
 
-            // Move die back to starting dice
-            die.addEventListener('click', () => {
+            let touchTimer;
+            die.addEventListener('touchstart', (event) => {
+                touchTimer = setTimeout(() => {
+                    moveToLeftovers(event.target);
+                }, 500); // 500ms for long press
             });
+
+            die.addEventListener('touchend', () => {
+                clearTimeout(touchTimer);
+            });
+
+            function moveToLeftovers(die) {
+                document.querySelector('.leftovers .dice-container').appendChild(die);
+                die.classList.add('left');
+                die.classList.remove('res');
+            }
         });
 
         // Roll all dice in the starting dice
